@@ -8,7 +8,8 @@ import logging
 import sys
 from pathlib import Path
 
-from src.pipelines.images import ImageIngestionPipeline
+from src.pipelines.images.index import index_image_files, index_images_directory
+from src.pipelines.images.pipeline import ImageIngestionPipeline
 from src.pipelines.images.models import ImageIngestionConfig
 
 # The corrupt-image error message below (and any other message containing
