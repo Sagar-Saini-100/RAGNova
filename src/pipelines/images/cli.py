@@ -109,7 +109,7 @@ def main() -> None:
         # unreadable file with a logged warning rather than raising — a
         # single corrupt image in a real directory scan doesn't need a
         # try/except here.
-        chunks = pipeline.ingest_directory(target)
+        count = index_images_directory(target, pipeline=pipeline)
     else:
         # A single explicitly-named file, unlike a directory scan, is
         # exactly the case verified directly (Chapter 7 /verify pass): a
@@ -117,21 +117,22 @@ def main() -> None:
         # traceback here, unlike the clean "Error: ..." message the
         # missing-path check above already gives. Same clean treatment now.
         try:
-            chunks = [pipeline.ingest_image(target)]
+            count = index_image_files([target], pipeline=pipeline)
+
         except ValueError as exc:
             sys.stderr.write(f"Error: {exc}\n")
             sys.exit(1)
 
-    chunk_dicts = [chunk.to_dict() for chunk in chunks]
+    summary = {"indexed": count}
 
     if args.output:
         out_path = Path(args.output)
         out_path.parent.mkdir(parents=True, exist_ok=True)
         with open(out_path, "w", encoding="utf-8") as f:
-            json.dump(chunk_dicts, f, indent=2, ensure_ascii=False)
-        print(f"Ingested {len(chunks)} image(s) -> saved to {out_path}")
+            json.dump(summary, f, indent=2)
+        print(f"Indexed {count} image(s) into image_index -> summary saved to {out_path}")
     else:
-        print(json.dumps(chunk_dicts, indent=2, ensure_ascii=False))
+        print(f"Indexed {count} image(s) into image_index.")
 
 
 if __name__ == "__main__":
