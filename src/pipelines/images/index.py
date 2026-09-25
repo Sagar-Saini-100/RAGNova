@@ -35,7 +35,7 @@ def index_image_files(paths: list[str | Path], client=None, pipeline=None) -> in
     collection = get_image_collection(client)
     pipeline = pipeline or ImageIngestionPipeline()
 
-    image_chunks = pipeline.ingest_batch([Path(p) for p in paths], store=False)
+    image_chunks = pipeline.ingest_batch([Path(p) for p in paths])
     # An image with no vector can't be searched at all — only possible
     # when the pipeline was built with embedding_enabled=False.
     image_chunks = [c for c in image_chunks if c.embedding is not None]
